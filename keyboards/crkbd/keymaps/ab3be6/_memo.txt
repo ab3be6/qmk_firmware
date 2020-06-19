@@ -1,0 +1,10 @@
+cd "G:\Project\PC\Keyboard\qmk_firmware-master"
+
+
+## Build ##
+make crkbd:default
+make crkbd:ab3be6
+
+## Build and Download ##
+make crkbd:ab3be6:avrdude
+make crkbd:mod:avrdude
