@@ -21,5 +21,48 @@
     "[markdown]": {
         "editor.trimAutoWhitespace": false,
         "files.trimTrailingWhitespace": false
-    }
+    },
+        "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
+        "terminal.integrated.env.windows": {
+            "MSYSTEM": "MINGW64",
+            "CHERE_INVOKING": "1"
+        },
+        "terminal.integrated.shellArgs.windows": [
+            "--login"
+        ],
+        "terminal.integrated.cursorStyle": "line",
+
+        "C_Cpp.default.intelliSenseMode": "msvc-x64",
+        "C_Cpp.default.browse.path": [
+            "C:/msys64/home/ShotaA/qmk_utils/avr8-gnu-toolchain/avr/include/**",
+            "C:/msys64/home/ShotaA/qmk_utils/avr8-gnu-toolchain/lib/gcc/avr/8.3.0/include/**",
+            "C:/msys64/home/ShotaA/qmk_utils/avr8-gnu-toolchain/lib/gcc/avr/8.3.0/include-fixed/**",
+            "C:/msys64/home/ShotaA/qmk_utils/gcc-arm-none-eabi/arm-none-eabi/include/**",
+            "C:/msys64/home/ShotaA/qmk_utils/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/8.3.1/include/**",
+
+            "${workspaceFolder}",
+            "${workspaceFolder}/drivers/**",
+            "${workspaceFolder}/keyboards/**",
+            "${workspaceFolder}/lib/**",
+            "${workspaceFolder}/quantum/**",
+            "${workspaceFolder}/tmk_core/**",
+        ],
+        "C_Cpp.default.windowsSdkVersion": "10.0.18362.0",
+        "C_Cpp.default.cppStandard": "c++17",
+        "C_Cpp.default.cStandard": "c11",
+        "C_Cpp.default.includePath": [
+            "C:/msys64/home/ShotaA/qmk_utils/avr8-gnu-toolchain/avr/include/**",
+            "C:/msys64/home/ShotaA/qmk_utils/avr8-gnu-toolchain/lib/gcc/avr/8.3.0/include/**",
+            "C:/msys64/home/ShotaA/qmk_utils/avr8-gnu-toolchain/lib/gcc/avr/8.3.0/include-fixed/**",
+            "C:/msys64/home/ShotaA/qmk_utils/gcc-arm-none-eabi/arm-none-eabi/include/**",
+            "C:/msys64/home/ShotaA/qmk_utils/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/8.3.1/include/**",
+
+            "${workspaceFolder}",
+            "${workspaceFolder}/drivers/**",
+            "${workspaceFolder}/keyboards/**",
+            "${workspaceFolder}/lib/**",
+            "${workspaceFolder}/quantum/**",
+            "${workspaceFolder}/tmk_core/**",
+        ],
+        "python.pythonPath": "C:\\Program Files\\Python27\\python.exe"
 }

@@ -4,8 +4,6 @@
     "EditorConfig.EditorConfig",
     "xaver.clang-format",
     "ms-vscode.cpptools",
-    "bierner.github-markdown-preview",
-    "donjayamanne.git-extension-pack",
     "CoenraadS.bracket-pair-colorizer-2"
   ]
 }
