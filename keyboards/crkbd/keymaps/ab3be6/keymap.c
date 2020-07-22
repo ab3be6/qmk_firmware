@@ -8,6 +8,8 @@ extern rgblight_config_t rgblight_config;
 
 extern uint8_t is_master;
 static bool bsdel_mods = false;
+uint8_t bsdel_kc = KC_BSPC;
+bool sleepBlocker_ON = false;
 
 // Each layer gets a name for readability, which is then used in the keymap matrix below.
 // The underscores don't mean anything - you can have a layer called STUFF or any other name.
@@ -26,7 +28,8 @@ enum custom_keycodes {
   BACKLIT,
   RGBRST,
   BSDEL,
-  SENDSTR
+  SENDSTR,
+  SLPBLC
 };
 
 enum macro_keycodes {
@@ -78,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
         RESET,  RGBRST, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, SENDSTR,     CAD,\
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,\
+      RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX,  SLPBLC, XXXXXXX, XXXXXXX,\
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,\
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -128,8 +131,31 @@ const char *read_keylogs(void);
 // void set_timelog(void);
 // const char *read_timelog(void);
 
+int last_time = 0;
+int elapsed_time = 0;
+uint8_t kc_SleepBlocker = KC_MS_LEFT;
+
 void matrix_scan_user(void) {
-   iota_gfx_task();
+    iota_gfx_task();
+
+    if(sleepBlocker_ON)
+    {
+    elapsed_time = timer_elapsed(last_time);
+    if(elapsed_time >= SLEEPBLOCKER_DURATION)
+    {
+        if(kc_SleepBlocker == KC_MS_LEFT){
+        kc_SleepBlocker = KC_MS_RIGHT;
+        }
+        else{
+        kc_SleepBlocker = KC_MS_LEFT;
+        }
+        register_code(kc_SleepBlocker);
+        unregister_code(kc_SleepBlocker);
+
+        last_time = timer_read();
+        iota_gfx_flush();
+    }
+    }
 }
 
 void matrix_render_user(struct CharacterMatrix *matrix) {
@@ -176,6 +202,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         persistent_default_layer_set(1UL<<_QWERTY);
       }
       return false;
+
     case LOWER:
       if (record->event.pressed) {
         layer_on(_LOWER);
@@ -185,6 +212,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
       }
       return false;
+
     case RAISE:
       if (record->event.pressed) {
         layer_on(_RAISE);
@@ -194,6 +222,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
       }
       return false;
+
     case ADJUST:
         if (record->event.pressed) {
           layer_on(_ADJUST);
@@ -222,29 +251,33 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       #endif
       return false;
 
+    case SFTSPC:
+    case SFTENT:
+        if (record->event.pressed) {
+          bsdel_mods = true;
+        }
+        else {
+            unregister_code (KC_LSFT);
+            bsdel_mods = false;
+        }
+        return true;
+
     case BSDEL:
-    {
-        uint8_t kc = KC_BSPC;
-        if (record->event.pressed)
-        {
-            if (keyboard_report->mods)
-            {
-                kc = KC_DEL;
+        if (record->event.pressed) {
+            if(bsdel_mods){
+                unregister_code(KC_LSFT);
+                register_code (KC_DEL);
+                register_code (KC_LSFT);
+                bsdel_kc = KC_DEL;
             }
-            bsdel_mods = keyboard_report->mods;
-            clear_keyboard();
-            register_code (kc);
-        }
-        else
-        {
-            if (bsdel_mods)
-            {
-                kc = KC_DEL;
+            else {
+                register_code (KC_BSPC);
+                bsdel_kc = KC_BSPC;
             }
-            unregister_code (kc);
-            keyboard_report->mods = bsdel_mods;
         }
-    }
+        else {
+            unregister_code(bsdel_kc);
+        }
     return false;
 
     case SENDSTR:
@@ -253,6 +286,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING("ZAQ!2wsxcde3");
         }
         return false;
+
+    case SLPBLC:
+    if (record->event.pressed)
+        {
+            if(sleepBlocker_ON)
+            {
+                sleepBlocker_ON = false;
+            }
+            else
+            {
+                sleepBlocker_ON = true;
+            }
+        }
+        return false;
+
   }
   return true;
 }
